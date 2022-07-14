@@ -1,2 +1,2 @@
 # MLBdash
-Dashboard for 2022 MLB standings and team stats. Built using R Shiny.
+MLBdash is an R Shiny dashboard containing team statistics and projected standings for the 2022 season. The first tab lists each team's projected wins and losses, which are computed as the average of projections from Baseball Reference, Fangraphs, and FiveThirtyEight. The second tab contains a graph of wRC+ (offensive value) versus FIP- (pitching value) and assigns teams to tiers by partitioning the coordinate space.
