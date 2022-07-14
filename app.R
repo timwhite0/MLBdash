@@ -10,6 +10,7 @@ library(reactable)
 library(ggplot2)
 library(stringr)
 
+current.time = format(Sys.time(), "%a %B %d %Y %I:%M%p %Z")
 
 ########################################################################################
 
@@ -972,7 +973,7 @@ server <- function(input, output, session) {
   
   output$update = renderText(
     paste0("<u>Last update:</u> ",
-           format(Sys.time(), "%a %B %d %Y %I:%M%p %Z"))
+           current.time)
   )
   
   output$table = renderReactable(
