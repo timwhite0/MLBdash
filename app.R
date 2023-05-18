@@ -3,11 +3,10 @@
 ### Packages
 library(shiny)
 library(shinydashboard)
+library(tidyverse)
 library(rvest)
 library(sjmisc)
-library(tibble)
 library(reactable)
-library(ggplot2)
 library(stringr)
 
 ########################################################################################
@@ -18,10 +17,10 @@ ui <- dashboardPage(
 
   skin = "black",
   
-  title = "2022 MLB Dashboard",
+  title = "2023 MLB Dashboard",
   
   dashboardHeader(
-    title = span(tagList(icon("circle-notch"), "2022 MLB Dashboard")),
+    title = span(tagList(icon("circle-notch"), "2023 MLB Dashboard")),
     titleWidth = 250
   ),
   
@@ -42,8 +41,6 @@ ui <- dashboardPage(
               box(htmlOutput("notes"), width = 13, solidHeader = FALSE),
               
               hr(style="border-color: black"),
-  
-              htmlOutput("update", style = "text-align: right; margin: 3px"),
               
               reactableOutput("table")
       ),
@@ -57,11 +54,11 @@ ui <- dashboardPage(
               
               selectInput("year",
                           label = NULL,
-                          choices = c("2021", "2020", "2019", "2018", "2017",
-                                      "2016", "2015", "2014", "2013", "2012",
-                                      "2011", "2010", "2009", "2008", "2007",
-                                      "2006", "2005", "2004", "2003"),
-                          selected = "2021",
+                          choices = c("2022", "2021", "2020", "2019", "2018",
+                                      "2017", "2016", "2015", "2014", "2013",
+                                      "2012", "2011", "2010", "2009", "2008",
+                                      "2007", "2006", "2005", "2004", "2003"),
+                          selected = "2022",
                           width = "100%"),
               
               plotOutput("pastgraph", height = "650px"),
@@ -75,290 +72,288 @@ ui <- dashboardPage(
 
 ########################################################################################
 
-##### 2022
+##### 2023
 
-### 2022 Baseball Reference
+### 2023 Baseball Reference
 
-# bref = read_html("https://www.baseball-reference.com/leagues/majors/2022-playoff-odds.shtml")
-# 
-# bref_page = bref %>%
-#   html_elements("td") %>%
-#   html_text() %>%
-#   data.frame()
-# 
-# bref_page = bref_page[-c(1:16),] %>%
-#   data.frame()
-# 
-# bref_page = bref_page[-which(bref_page$. == "NL East" |
-#                                bref_page$. == "NL Central" |
-#                                bref_page$. == "NL West" |
-#                                bref_page$. == "AL East" |
-#                                bref_page$. == "AL Central" |
-#                                bref_page$. == "AL West"),] %>%
-#   data.frame()
-# 
-# bref_team = bref_page[seq(from = 1, to = 842, by = 29),]
-# bref_proj_w = bref_page[seq(from = 13, to = 854, by = 29),]
-# bref_proj_l = bref_page[seq(from = 14, to = 855, by = 29),]
-# 
-# bref_data = data.frame(bref_team = as.factor(bref_team),
-#                        bref_proj_w = as.numeric(bref_proj_w),
-#                        bref_proj_l = as.numeric(bref_proj_l))
-# bref_data = bref_data[order(bref_data$bref_team),]
-# row.names(bref_data) = NULL
-# 
-# for (i in 1:30) {
-#   if (bref_data$bref_proj_w[i] + bref_data$bref_proj_l[i] == 163) {
-#     bref_data$bref_proj_w[i] = bref_data$bref_proj_w[i] - 0.5
-#     bref_data$bref_proj_l[i] = bref_data$bref_proj_l[i] - 0.5
-#   }
-#   
-#   if (bref_data$bref_proj_w[i] + bref_data$bref_proj_l[i] == 161) {
-#     bref_data$bref_proj_w[i] = bref_data$bref_proj_w[i] + 0.5
-#     bref_data$bref_proj_l[i] = bref_data$bref_proj_l[i] + 0.5
-#   }
-# }
+bref = read_html("https://www.baseball-reference.com/leagues/majors/2023-playoff-odds.shtml")
 
+bref_page = bref %>%
+  html_elements("td") %>%
+  html_text() %>%
+  data.frame()
 
+bref_page = bref_page[-c(1:16),] %>%
+  data.frame()
 
-### 2022 FanGraphs
+bref_page = bref_page[-which(bref_page$. == "NL East" |
+                               bref_page$. == "NL Central" |
+                               bref_page$. == "NL West" |
+                               bref_page$. == "AL East" |
+                               bref_page$. == "AL Central" |
+                               bref_page$. == "AL West"),] %>%
+  data.frame()
 
-# fg = read_html("https://www.fangraphs.com/depthcharts.aspx?position=Standings")
-# 
-# fg_page = fg %>%
-#   html_elements("td") %>%
-#   html_text() %>%
-#   data.frame()
-# 
-# fg_page = fg_page[80:709,] %>%
-#   data.frame()
-# 
-# fg_team = fg_page[seq(from = 1, to = 610, by = 21),]
-# 
-# for (i in 1:30) {
-#   if (str_contains(fg_team[i], "Diamondbacks")) {
-#     fg_team[i] = "Arizona Diamondbacks"
-#   }
-#   if (str_contains(fg_team[i], "Braves")) {
-#     fg_team[i] = "Atlanta Braves"
-#   }
-#   if (str_contains(fg_team[i], "Orioles")) {
-#     fg_team[i] = "Baltimore Orioles"
-#   }
-#   if (str_contains(fg_team[i], "Red Sox")) {
-#     fg_team[i] = "Boston Red Sox"
-#   }
-#   if (str_contains(fg_team[i], "Cubs")) {
-#     fg_team[i] = "Chicago Cubs"
-#   }
-#   if (str_contains(fg_team[i], "White Sox")) {
-#     fg_team[i] = "Chicago White Sox"
-#   }
-#   if (str_contains(fg_team[i], "Reds")) {
-#     fg_team[i] = "Cincinnati Reds"
-#   }
-#   if (str_contains(fg_team[i], "Guardians")) {
-#     fg_team[i] = "Cleveland Guardians"
-#   }
-#   if (str_contains(fg_team[i], "Rockies")) {
-#     fg_team[i] = "Colorado Rockies"
-#   }
-#   if (str_contains(fg_team[i], "Tigers")) {
-#     fg_team[i] = "Detroit Tigers"
-#   }
-#   if (str_contains(fg_team[i], "Astros")) {
-#     fg_team[i] = "Houston Astros"
-#   }
-#   if (str_contains(fg_team[i], "Royals")) {
-#     fg_team[i] = "Kansas City Royals"
-#   }
-#   if (str_contains(fg_team[i], "Angels")) {
-#     fg_team[i] = "Los Angeles Angels"
-#   }
-#   if (str_contains(fg_team[i], "Dodgers")) {
-#     fg_team[i] = "Los Angeles Dodgers"
-#   }
-#   if (str_contains(fg_team[i], "Marlins")) {
-#     fg_team[i] = "Miami Marlins"
-#   }
-#   if (str_contains(fg_team[i], "Brewers")) {
-#     fg_team[i] = "Milwaukee Brewers"
-#   }
-#   if (str_contains(fg_team[i], "Twins")) {
-#     fg_team[i] = "Minnesota Twins"
-#   }
-#   if (str_contains(fg_team[i], "Mets")) {
-#     fg_team[i] = "New York Mets"
-#   }
-#   if (str_contains(fg_team[i], "Yankees")) {
-#     fg_team[i] = "New York Yankees"
-#   }
-#   if (str_contains(fg_team[i], "Athletics")) {
-#     fg_team[i] = "Oakland Athletics"
-#   }
-#   if (str_contains(fg_team[i], "Phillies")) {
-#     fg_team[i] = "Philadelphia Phillies"
-#   }
-#   if (str_contains(fg_team[i], "Pirates")) {
-#     fg_team[i] = "Pittsburgh Pirates"
-#   }
-#   if (str_contains(fg_team[i], "Padres")) {
-#     fg_team[i] = "San Diego Padres"
-#   }
-#   if (str_contains(fg_team[i], "Giants")) {
-#     fg_team[i] = "San Francisco Giants"
-#   }
-#   if (str_contains(fg_team[i], "Mariners")) {
-#     fg_team[i] = "Seattle Mariners"
-#   }
-#   if (str_contains(fg_team[i], "Cardinals")) {
-#     fg_team[i] = "St. Louis Cardinals"
-#   }
-#   if (str_contains(fg_team[i], "Rays")) {
-#     fg_team[i] = "Tampa Bay Rays"
-#   }
-#   if (str_contains(fg_team[i], "Rangers")) {
-#     fg_team[i] = "Texas Rangers"
-#   }
-#   if (str_contains(fg_team[i], "Blue Jays")) {
-#     fg_team[i] = "Toronto Blue Jays"
-#   }
-#   if (str_contains(fg_team[i], "Nationals")) {
-#     fg_team[i] = "Washington Nationals"
-#   }
-# }
-# 
-# fg_proj_w = fg_page[seq(from = 16, to = 625, by = 21),]
-# fg_proj_l = fg_page[seq(from = 17, to = 626, by = 21),]
-# 
-# fg_data = data.frame(fg_team = as.factor(fg_team),
-#                      fg_proj_w = as.numeric(fg_proj_w),
-#                      fg_proj_l = as.numeric(fg_proj_l))
-# fg_data = fg_data[order(fg_data$fg_team),]
-# row.names(fg_data) = NULL
+bref_team = bref_page[seq(from = 1, to = 842, by = 29),]
+bref_proj_w = bref_page[seq(from = 13, to = 854, by = 29),]
+bref_proj_l = bref_page[seq(from = 14, to = 855, by = 29),]
+
+bref_data = data.frame(bref_team = as.factor(bref_team),
+                       bref_proj_w = as.numeric(bref_proj_w),
+                       bref_proj_l = as.numeric(bref_proj_l))
+bref_data = bref_data[order(bref_data$bref_team),]
+row.names(bref_data) = NULL
+
+for (i in 1:30) {
+  if (bref_data$bref_proj_w[i] + bref_data$bref_proj_l[i] == 163) {
+    bref_data$bref_proj_w[i] = bref_data$bref_proj_w[i] - 0.5
+    bref_data$bref_proj_l[i] = bref_data$bref_proj_l[i] - 0.5
+  }
+
+  if (bref_data$bref_proj_w[i] + bref_data$bref_proj_l[i] == 161) {
+    bref_data$bref_proj_w[i] = bref_data$bref_proj_w[i] + 0.5
+    bref_data$bref_proj_l[i] = bref_data$bref_proj_l[i] + 0.5
+  }
+}
 
 
 
-### 2022 FiveThirtyEight
+### 2023 FanGraphs
 
-# fte = read_html("https://projects.fivethirtyeight.com/2022-mlb-predictions/")
-# 
-# fte_page = fte %>%
-#   html_elements("td") %>%
-#   html_text() %>%
-#   data.frame()
-# 
-# 
-# fte_team = fte_page[seq(from = 1, to = 262, by = 9),]
-# 
-# for (i in 1:30) {
-#   if (str_contains(fte_team[i], "Diamondbacks")) {
-#     fte_team[i] = "Arizona Diamondbacks"
-#   }
-#   if (str_contains(fte_team[i], "Braves")) {
-#     fte_team[i] = "Atlanta Braves"
-#   }
-#   if (str_contains(fte_team[i], "Orioles")) {
-#     fte_team[i] = "Baltimore Orioles"
-#   }
-#   if (str_contains(fte_team[i], "Red Sox")) {
-#     fte_team[i] = "Boston Red Sox"
-#   }
-#   if (str_contains(fte_team[i], "Cubs")) {
-#     fte_team[i] = "Chicago Cubs"
-#   }
-#   if (str_contains(fte_team[i], "White Sox")) {
-#     fte_team[i] = "Chicago White Sox"
-#   }
-#   if (str_contains(fte_team[i], "Reds")) {
-#     fte_team[i] = "Cincinnati Reds"
-#   }
-#   if (str_contains(fte_team[i], "Guardians")) {
-#     fte_team[i] = "Cleveland Guardians"
-#   }
-#   if (str_contains(fte_team[i], "Rockies")) {
-#     fte_team[i] = "Colorado Rockies"
-#   }
-#   if (str_contains(fte_team[i], "Tigers")) {
-#     fte_team[i] = "Detroit Tigers"
-#   }
-#   if (str_contains(fte_team[i], "Astros")) {
-#     fte_team[i] = "Houston Astros"
-#   }
-#   if (str_contains(fte_team[i], "Royals")) {
-#     fte_team[i] = "Kansas City Royals"
-#   }
-#   if (str_contains(fte_team[i], "Angels")) {
-#     fte_team[i] = "Los Angeles Angels"
-#   }
-#   if (str_contains(fte_team[i], "Dodgers")) {
-#     fte_team[i] = "Los Angeles Dodgers"
-#   }
-#   if (str_contains(fte_team[i], "Marlins")) {
-#     fte_team[i] = "Miami Marlins"
-#   }
-#   if (str_contains(fte_team[i], "Brewers")) {
-#     fte_team[i] = "Milwaukee Brewers"
-#   }
-#   if (str_contains(fte_team[i], "Twins")) {
-#     fte_team[i] = "Minnesota Twins"
-#   }
-#   if (str_contains(fte_team[i], "Mets")) {
-#     fte_team[i] = "New York Mets"
-#   }
-#   if (str_contains(fte_team[i], "Yankees")) {
-#     fte_team[i] = "New York Yankees"
-#   }
-#   if (str_contains(fte_team[i], "Athletics")) {
-#     fte_team[i] = "Oakland Athletics"
-#   }
-#   if (str_contains(fte_team[i], "Phillies")) {
-#     fte_team[i] = "Philadelphia Phillies"
-#   }
-#   if (str_contains(fte_team[i], "Pirates")) {
-#     fte_team[i] = "Pittsburgh Pirates"
-#   }
-#   if (str_contains(fte_team[i], "Padres")) {
-#     fte_team[i] = "San Diego Padres"
-#   }
-#   if (str_contains(fte_team[i], "Giants")) {
-#     fte_team[i] = "San Francisco Giants"
-#   }
-#   if (str_contains(fte_team[i], "Mariners")) {
-#     fte_team[i] = "Seattle Mariners"
-#   }
-#   if (str_contains(fte_team[i], "Cardinals")) {
-#     fte_team[i] = "St. Louis Cardinals"
-#   }
-#   if (str_contains(fte_team[i], "Rays")) {
-#     fte_team[i] = "Tampa Bay Rays"
-#   }
-#   if (str_contains(fte_team[i], "Rangers")) {
-#     fte_team[i] = "Texas Rangers"
-#   }
-#   if (str_contains(fte_team[i], "Blue Jays")) {
-#     fte_team[i] = "Toronto Blue Jays"
-#   }
-#   if (str_contains(fte_team[i], "Nationals")) {
-#     fte_team[i] = "Washington Nationals"
-#   }
-# }
-# 
-# fte_proj_record = unlist(str_split(fte_page[seq(from = 5, to = 266, by = 9),], "-"))
-# fte_proj_w = fte_proj_record[seq(from = 1, to = 59, by = 2)]
-# fte_proj_l = fte_proj_record[seq(from = 2, to = 60, by = 2)]
+fg = read_html("https://www.fangraphs.com/depthcharts.aspx?position=Standings")
 
-# fte_data = data.frame(fte_team = as.factor(fte_team),
-#                       fte_proj_w = as.numeric(fte_proj_w),
-#                       fte_proj_l = as.numeric(fte_proj_l))
-# fte_data = fte_data[order(fte_data$fte_team),]
-# row.names(fte_data) = NULL
+fg_page = (fg %>%
+  html_elements("table") %>%
+  html_table())[[6]] %>%
+  tibble() %>%
+  slice(-c(1,2))
 
+fg_team = fg_page$X1
+
+for (i in 1:30) {
+  if (str_contains(fg_team[i], "Diamondbacks")) {
+    fg_team[i] = "Arizona Diamondbacks"
+  }
+  if (str_contains(fg_team[i], "Braves")) {
+    fg_team[i] = "Atlanta Braves"
+  }
+  if (str_contains(fg_team[i], "Orioles")) {
+    fg_team[i] = "Baltimore Orioles"
+  }
+  if (str_contains(fg_team[i], "Red Sox")) {
+    fg_team[i] = "Boston Red Sox"
+  }
+  if (str_contains(fg_team[i], "Cubs")) {
+    fg_team[i] = "Chicago Cubs"
+  }
+  if (str_contains(fg_team[i], "White Sox")) {
+    fg_team[i] = "Chicago White Sox"
+  }
+  if (str_contains(fg_team[i], "Reds")) {
+    fg_team[i] = "Cincinnati Reds"
+  }
+  if (str_contains(fg_team[i], "Guardians")) {
+    fg_team[i] = "Cleveland Guardians"
+  }
+  if (str_contains(fg_team[i], "Rockies")) {
+    fg_team[i] = "Colorado Rockies"
+  }
+  if (str_contains(fg_team[i], "Tigers")) {
+    fg_team[i] = "Detroit Tigers"
+  }
+  if (str_contains(fg_team[i], "Astros")) {
+    fg_team[i] = "Houston Astros"
+  }
+  if (str_contains(fg_team[i], "Royals")) {
+    fg_team[i] = "Kansas City Royals"
+  }
+  if (str_contains(fg_team[i], "Angels")) {
+    fg_team[i] = "Los Angeles Angels"
+  }
+  if (str_contains(fg_team[i], "Dodgers")) {
+    fg_team[i] = "Los Angeles Dodgers"
+  }
+  if (str_contains(fg_team[i], "Marlins")) {
+    fg_team[i] = "Miami Marlins"
+  }
+  if (str_contains(fg_team[i], "Brewers")) {
+    fg_team[i] = "Milwaukee Brewers"
+  }
+  if (str_contains(fg_team[i], "Twins")) {
+    fg_team[i] = "Minnesota Twins"
+  }
+  if (str_contains(fg_team[i], "Mets")) {
+    fg_team[i] = "New York Mets"
+  }
+  if (str_contains(fg_team[i], "Yankees")) {
+    fg_team[i] = "New York Yankees"
+  }
+  if (str_contains(fg_team[i], "Athletics")) {
+    fg_team[i] = "Oakland Athletics"
+  }
+  if (str_contains(fg_team[i], "Phillies")) {
+    fg_team[i] = "Philadelphia Phillies"
+  }
+  if (str_contains(fg_team[i], "Pirates")) {
+    fg_team[i] = "Pittsburgh Pirates"
+  }
+  if (str_contains(fg_team[i], "Padres")) {
+    fg_team[i] = "San Diego Padres"
+  }
+  if (str_contains(fg_team[i], "Giants")) {
+    fg_team[i] = "San Francisco Giants"
+  }
+  if (str_contains(fg_team[i], "Mariners")) {
+    fg_team[i] = "Seattle Mariners"
+  }
+  if (str_contains(fg_team[i], "Cardinals")) {
+    fg_team[i] = "St. Louis Cardinals"
+  }
+  if (str_contains(fg_team[i], "Rays")) {
+    fg_team[i] = "Tampa Bay Rays"
+  }
+  if (str_contains(fg_team[i], "Rangers")) {
+    fg_team[i] = "Texas Rangers"
+  }
+  if (str_contains(fg_team[i], "Blue Jays")) {
+    fg_team[i] = "Toronto Blue Jays"
+  }
+  if (str_contains(fg_team[i], "Nationals")) {
+    fg_team[i] = "Washington Nationals"
+  }
+}
+
+fg_proj_w = fg_page$X16
+fg_proj_l = fg_page$X17
+
+fg_data = data.frame(fg_team = as.factor(fg_team),
+                     fg_proj_w = as.numeric(fg_proj_w),
+                     fg_proj_l = as.numeric(fg_proj_l))
+fg_data = fg_data[order(fg_data$fg_team),]
+row.names(fg_data) = NULL
 
 
-### 2022 current wins and losses
 
-espn = read_html("https://www.espn.com/mlb/standings")
+### 2023 FiveThirtyEight
+
+fte = read_html("https://projects.fivethirtyeight.com/2023-mlb-predictions/")
+
+fte_page = fte %>%
+  html_elements("td") %>%
+  html_text() %>%
+  data.frame()
+
+
+fte_team = fte_page[seq(from = 1, to = 262, by = 9),]
+
+for (i in 1:30) {
+  if (str_contains(fte_team[i], "Diamondbacks")) {
+    fte_team[i] = "Arizona Diamondbacks"
+  }
+  if (str_contains(fte_team[i], "Braves")) {
+    fte_team[i] = "Atlanta Braves"
+  }
+  if (str_contains(fte_team[i], "Orioles")) {
+    fte_team[i] = "Baltimore Orioles"
+  }
+  if (str_contains(fte_team[i], "Red Sox")) {
+    fte_team[i] = "Boston Red Sox"
+  }
+  if (str_contains(fte_team[i], "Cubs")) {
+    fte_team[i] = "Chicago Cubs"
+  }
+  if (str_contains(fte_team[i], "White Sox")) {
+    fte_team[i] = "Chicago White Sox"
+  }
+  if (str_contains(fte_team[i], "Reds")) {
+    fte_team[i] = "Cincinnati Reds"
+  }
+  if (str_contains(fte_team[i], "Guardians")) {
+    fte_team[i] = "Cleveland Guardians"
+  }
+  if (str_contains(fte_team[i], "Rockies")) {
+    fte_team[i] = "Colorado Rockies"
+  }
+  if (str_contains(fte_team[i], "Tigers")) {
+    fte_team[i] = "Detroit Tigers"
+  }
+  if (str_contains(fte_team[i], "Astros")) {
+    fte_team[i] = "Houston Astros"
+  }
+  if (str_contains(fte_team[i], "Royals")) {
+    fte_team[i] = "Kansas City Royals"
+  }
+  if (str_contains(fte_team[i], "Angels")) {
+    fte_team[i] = "Los Angeles Angels"
+  }
+  if (str_contains(fte_team[i], "Dodgers")) {
+    fte_team[i] = "Los Angeles Dodgers"
+  }
+  if (str_contains(fte_team[i], "Marlins")) {
+    fte_team[i] = "Miami Marlins"
+  }
+  if (str_contains(fte_team[i], "Brewers")) {
+    fte_team[i] = "Milwaukee Brewers"
+  }
+  if (str_contains(fte_team[i], "Twins")) {
+    fte_team[i] = "Minnesota Twins"
+  }
+  if (str_contains(fte_team[i], "Mets")) {
+    fte_team[i] = "New York Mets"
+  }
+  if (str_contains(fte_team[i], "Yankees")) {
+    fte_team[i] = "New York Yankees"
+  }
+  if (str_contains(fte_team[i], "Athletics")) {
+    fte_team[i] = "Oakland Athletics"
+  }
+  if (str_contains(fte_team[i], "Phillies")) {
+    fte_team[i] = "Philadelphia Phillies"
+  }
+  if (str_contains(fte_team[i], "Pirates")) {
+    fte_team[i] = "Pittsburgh Pirates"
+  }
+  if (str_contains(fte_team[i], "Padres")) {
+    fte_team[i] = "San Diego Padres"
+  }
+  if (str_contains(fte_team[i], "Giants")) {
+    fte_team[i] = "San Francisco Giants"
+  }
+  if (str_contains(fte_team[i], "Mariners")) {
+    fte_team[i] = "Seattle Mariners"
+  }
+  if (str_contains(fte_team[i], "Cardinals")) {
+    fte_team[i] = "St. Louis Cardinals"
+  }
+  if (str_contains(fte_team[i], "Rays")) {
+    fte_team[i] = "Tampa Bay Rays"
+  }
+  if (str_contains(fte_team[i], "Rangers")) {
+    fte_team[i] = "Texas Rangers"
+  }
+  if (str_contains(fte_team[i], "Blue Jays")) {
+    fte_team[i] = "Toronto Blue Jays"
+  }
+  if (str_contains(fte_team[i], "Nationals")) {
+    fte_team[i] = "Washington Nationals"
+  }
+}
+
+fte_proj_record = unlist(str_split(fte_page[seq(from = 5, to = 266, by = 9),], "-"))
+fte_proj_w = fte_proj_record[seq(from = 1, to = 59, by = 2)]
+fte_proj_l = fte_proj_record[seq(from = 2, to = 60, by = 2)]
+
+fte_data = data.frame(fte_team = as.factor(fte_team),
+                      fte_proj_w = as.numeric(fte_proj_w),
+                      fte_proj_l = as.numeric(fte_proj_l))
+fte_data = fte_data[order(fte_data$fte_team),]
+row.names(fte_data) = NULL
+
+
+
+### 2023 current wins and losses
+
+espn = read_html("https://www.espn.com/mlb/standings/_/season/2023")
 
 espn_page = espn %>%
               html_elements("td") %>%
@@ -481,21 +476,19 @@ row.names(espn_data) = NULL
 
 
 
-### 2022 merge data frames
+### 2023 merge data frames
 
-#data = cbind(espn_data[,1:3], bref_data[-1], fg_data[,-1], fte_data[,-1])
-data = cbind(espn_data[,1:3])
+data = cbind(espn_data[,1:3], bref_data[-1], fg_data[,-1], fte_data[,-1])
 colnames(data)[1] = "team"
 
-#data$avg_w = round(rowMeans(data[,c(4,6,8)]), 2)
-data$avg_w = data$espn_current_w
-#data$avg_l = round(rowMeans(data[,c(5,7,9)]), 2)
-data$avg_l = data$espn_current_l
+data$avg_w = round(rowMeans(data[,c(4,6,8)]), 2)
+data$avg_l = round(rowMeans(data[,c(5,7,9)]), 2)
 
 
-### 2022 team wRC+
 
-fg_batting = read_html("https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=8&season=2022&month=0&season1=2022&ind=0&team=0,ts&rost=&age=&filter=&players=0")
+### 2023 team wRC+
+
+fg_batting = read_html("https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=8&season=2023&month=0&season1=2023&ind=0&team=0,ts&rost=&age=&filter=&players=0")
 
 fg_batting_page = fg_batting %>%
   html_elements("span") %>%
@@ -506,7 +499,7 @@ fg_batting_page = fg_batting %>%
   html_text() %>%
   data.frame()
 
-fg_batting_team = fg_batting_page[seq(from = 2, to = 640, by = 22),]
+fg_batting_team = fg_batting_page[seq(from = 2, to = 669, by = 23),]
 
 for (i in 1:30) {
   if (str_contains(fg_batting_team[i], "ARI")) {
@@ -601,7 +594,7 @@ for (i in 1:30) {
   }
 }
 
-fg_batting_wrc = fg_batting_page[seq(from = 18, to = 656, by = 22),]
+fg_batting_wrc = fg_batting_page[seq(from = 19, to = 686, by = 23),]
 
 fg_batting_data = data.frame(team = as.factor(fg_batting_team),
                              team_wrc = as.numeric(fg_batting_wrc))
@@ -612,9 +605,9 @@ data$team_wrc = fg_batting_data$team_wrc
 
 
 
-### 2022 team FIP-
+### 2023 team FIP-
 
-fg_pitching = read_html("https://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=2022&month=0&season1=2022&ind=0&team=0,ts&rost=0&age=0&filter=&players=0&startdate=2022-01-01&enddate=2022-12-31")
+fg_pitching = read_html("https://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=2023&month=0&season1=2023&ind=0&team=0,ts&rost=0&age=0&filter=&players=0&startdate=2023-01-01&enddate=2023-12-31")
 
 fg_pitching_page = fg_pitching %>%
   html_elements("span") %>%
@@ -731,15 +724,14 @@ data$team_fip = fg_pitching_data$team_fip
 
 
 
-### 2022 order data by average projected wins
+### 2023 order data by average projected wins
 
-#data = data[order(rowMeans(data[,c(4,6,8)]), decreasing = TRUE),]
-data = data[order(data$espn_current_w, decreasing = TRUE),]
+data = data[order(rowMeans(data[,c(4,6,8)]), decreasing = TRUE),]
 row.names(data) = NULL
 
 
 
-### 2022 add column for division
+### 2023 add column for division
 
 data = add_column(data,
                   division = NA,
@@ -840,7 +832,7 @@ for (i in 1:30) {
 
 
 
-### 2022 add column for league
+### 2023 add column for league
 
 data = add_column(data,
                   league = ifelse(data$division == "AL East" |
@@ -851,7 +843,7 @@ data = add_column(data,
 
 
 
-### 2022 add column for overall rank
+### 2023 add column for overall rank
 
 data = add_column(data,
                   rank = seq(from = 1, to = 30, by = 1),
@@ -859,10 +851,10 @@ data = add_column(data,
 
 
 
-### 2022 data table for dashboard
+### 2023 data table for dashboard
 
-#dashboard_data = data[,-c(7:12)]
-dashboard_data = data
+dashboard_data = data[,-c(7:12)]
+# dashboard_data = data
 
 colnames(dashboard_data) = c("Rank",
                              "Team",
@@ -880,7 +872,7 @@ dashboard_data$`Projected L` = round(dashboard_data$`Projected L`)
 
 
 
-### 2022 data for team tiers graph
+### 2023 data for team tiers graph
 
 plot_data = dashboard_data
 plot_data$Team = as.character(plot_data$Team)
@@ -1151,7 +1143,7 @@ scrape.and.clean = function(year) {
     html_text() %>%
     data.frame()
   
-  battingXXXX_team = battingXXXX_page[seq(from = 2, to = 640, by = 22),]
+  battingXXXX_team = battingXXXX_page[seq(from = 2, to = 669, by = 23),]
   
   for (i in 1:30) {
     if (str_contains(battingXXXX_team[i], "ARI")) {
@@ -1261,7 +1253,7 @@ scrape.and.clean = function(year) {
     }
   }
   
-  battingXXXX_wrc = battingXXXX_page[seq(from = 18, to = 656, by = 22),]
+  battingXXXX_wrc = battingXXXX_page[seq(from = 19, to = 686, by = 23),]
   
   battingXXXX_data = data.frame(team = as.factor(battingXXXX_team),
                                 team_wrc = as.numeric(battingXXXX_wrc))
@@ -1648,11 +1640,11 @@ server <- function(input, output, session) {
     paste0("<b><u>Notes:</u></b>",
     "<br><br>",
     "<b>Projected wins/losses:</b> Average of projected wins/losses from ",
-    a("Baseball Reference", href = "https://www.baseball-reference.com/leagues/majors/2022-playoff-odds.shtml", target = "_blank"),
+    a("Baseball Reference", href = "https://www.baseball-reference.com/leagues/majors/2023-playoff-odds.shtml", target = "_blank"),
     ", ",
     a("Fangraphs", href = "https://www.fangraphs.com/depthcharts.aspx?position=Standings", target = "_blank"),
     ", and ",
-    a("FiveThirtyEight", href = "https://projects.fivethirtyeight.com/2022-mlb-predictions/", target = "_blank"),
+    a("FiveThirtyEight", href = "https://projects.fivethirtyeight.com/2023-mlb-predictions/", target = "_blank"),
     ". <b>Rank</b> is based on projected wins.",
     "<br>",
     "<b>wRC+:</b> Weighted runs created plus, a measure of offensive value. League average is 100. Values greater than 100 are above average, and vice versa. See ",
@@ -1662,10 +1654,6 @@ server <- function(input, output, session) {
     "<b>FIP-:</b> Fielding independent pitching minus, a measure of pitching value. League average is 100. Values less than 100 are above average, and vice versa. See ",
     a("here", href = "https://library.fangraphs.com/pitching/era-fip-xfip/", target = "_blank"),
     " for more details.")
-  )
-  
-  output$update = renderText(
-    paste0("<u>Last update:</u> Thu October 6 2022 8:15AM EDT")
   )
   
   output$table = renderReactable(
