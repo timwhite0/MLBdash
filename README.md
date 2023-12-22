@@ -1,6 +1,6 @@
 # MLBdash
 
-[MLBdash](https://twhit.shinyapps.io/MLBdash/) is an R Shiny dashboard with team statistics and projected standings for the 2023 MLB season.
+[MLBdash](https://twhit.shinyapps.io/MLBdash/) is an R Shiny dashboard with projected standings and team statistics dating back to 1998.
 
 - The first tab lists each team's projected wins and losses, which are the average of the projections from [Baseball Reference](https://www.baseball-reference.com/leagues/majors/2022-playoff-odds.shtml) and [Baseball Prospectus](https://www.baseballprospectus.com/standings/).
 - The second tab contains a plot of OPS+ (offensive performance) versus ERA+ (pitching performance) and assigns teams to tiers by partitioning the coordinate space of this plot.
