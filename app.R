@@ -40,8 +40,6 @@ ui <- dashboardPage(
               
               box(htmlOutput("notes"), width = 13, solidHeader = FALSE),
               
-              hr(style="border-color: black"),
-              
               reactableOutput("table")
       ),
       
@@ -54,7 +52,7 @@ ui <- dashboardPage(
               
               selectInput("year",
                           label = NULL,
-                          choices = as.character(seq(from = 2023, 1998, by = -1)),
+                          choices = as.character(seq(from = 2023, to = 1998, by = -1)),
                           selected = "2023",
                           width = "100%"),
               
@@ -339,12 +337,14 @@ server <- function(input, output, session) {
                                 style = list(background = "#D7E4EB", fontWeight = 600)),
                 "Team" = colDef(minWidth = 150,
                                 style = list(background = "#D7E4EB", fontWeight = 600)),
+                "League" = colDef(style = list(background = "#D7E4EB", fontWeight = 600)),
+                "Division" = colDef(style = list(background = "#D7E4EB", fontWeight = 600)),
                 "Current W" = colDef(defaultSortOrder = "desc"),
                 "Current L" = colDef(defaultSortOrder = "asc"),
                 "Projected W" = colDef(defaultSortOrder = "desc",
-                                       style = list(color = "darkred", fontWeight = 600)),
+                                       style = list(color = "darkred", fontWeight = 1000)),
                 "Projected L" = colDef(defaultSortOrder = "asc",
-                                       style = list(color = "darkred", fontWeight = 600)),
+                                       style = list(color = "darkred", fontWeight = 1000)),
                 "OPS+" = colDef(defaultSortOrder = "desc"),
                 "ERA+" = colDef(defaultSortOrder = "desc")
               ),
@@ -360,26 +360,26 @@ server <- function(input, output, session) {
               defaultColDef = colDef(
                 align = "center",
                 headerStyle = list(background = "#D7E4EB", fontWeight = "bold",
-                                   borderBottom = "1px solid black",
-                                   borderTop = "1px solid black")
+                                   borderBottom = "3px solid black",
+                                   borderTop = "3px solid black")
               ))
   )
   
   output$graph = renderPlot(
     ggplot() +
-      geom_hline(yintercept = 100, linetype = "dotted", color = "#951209", size = 1) +
-      geom_vline(xintercept = 100, linetype = "dotted", color = "#951209", size = 1) +
-      geom_abline(intercept = 150, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 160, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 170, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 180, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 190, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 200, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 210, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 220, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 230, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 240, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 250, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
+      geom_hline(yintercept = 100, linetype = "longdash", color = "#951209", linewidth = 0.5) +
+      geom_vline(xintercept = 100, linetype = "longdash", color = "#951209", linewidth = 0.5) +
+      geom_abline(intercept = 150, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 160, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 170, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 180, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 190, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 200, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 210, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 220, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 230, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 240, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 250, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
       geom_label(aes(x = plot_data$`OPS+`,
                      y = plot_data$`ERA+`,
                      label = plot_data$Team),
@@ -431,19 +431,19 @@ server <- function(input, output, session) {
   
   output$pastgraph = renderPlot(
     ggplot() +
-      geom_hline(yintercept = 100, linetype = "dotted", color = "#951209", size = 1) +
-      geom_vline(xintercept = 100, linetype = "dotted", color = "#951209", size = 1) +
-      geom_abline(intercept = 150, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 160, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 170, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 180, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 190, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 200, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 210, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 220, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 230, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 240, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
-      geom_abline(intercept = 250, slope = -1, linetype = "dashed", color = "darkslategray", size = 0.15) +
+      geom_hline(yintercept = 100, linetype = "longdash", color = "#951209", linewidth = 0.5) +
+      geom_vline(xintercept = 100, linetype = "longdash", color = "#951209", linewidth = 0.5) +
+      geom_abline(intercept = 150, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 160, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 170, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 180, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 190, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 200, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 210, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 220, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 230, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 240, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
+      geom_abline(intercept = 250, slope = -1, linetype = "dashed", color = "darkslategray", linewidth = 0.15) +
       geom_label(aes(x = ops(),
                      y = era(),
                      label = team()),
@@ -472,10 +472,12 @@ server <- function(input, output, session) {
                                 style = list(background = "#D7E4EB", fontWeight = 600)),
                 "Team" = colDef(minWidth = 150,
                                 style = list(background = "#D7E4EB", fontWeight = 600)),
+                "League" = colDef(style = list(background = "#D7E4EB", fontWeight = 600)),
+                "Division" = colDef(style = list(background = "#D7E4EB", fontWeight = 600)),
                 "W" = colDef(defaultSortOrder = "desc"),
                 "L" = colDef(defaultSortOrder = "asc"),
                 "OPS+" = colDef(defaultSortOrder = "desc"),
-                "ERA+=" = colDef(defaultSortOrder = "desc")
+                "ERA+" = colDef(defaultSortOrder = "desc")
               ),
               bordered = TRUE,
               highlight = TRUE,
@@ -489,8 +491,8 @@ server <- function(input, output, session) {
               defaultColDef = colDef(
                 align = "center",
                 headerStyle = list(background = "#D7E4EB", fontWeight = "bold",
-                                   borderBottom = "1px solid black",
-                                   borderTop = "1px solid black")
+                                   borderBottom = "3px solid black",
+                                   borderTop = "3px solid black")
               ))
   )
 }
