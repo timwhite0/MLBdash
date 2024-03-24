@@ -17,7 +17,7 @@ ui <- dashboardPage(
 
   skin = "black",
   
-  title = "2023 MLB Dashboard",
+  title = "2024 MLB Dashboard",
   
   dashboardHeader(
     title = span(tagList(icon("baseball"), "MLBdash")),
@@ -28,8 +28,8 @@ ui <- dashboardPage(
     width = 250,
     
     sidebarMenu(
-      menuItem("2023 standings", tabName = "standings", icon = icon("list")),
-      menuItem("2023 team tiers", tabName = "tiers", icon = icon("layer-group")),
+      menuItem("2024 standings", tabName = "standings", icon = icon("list")),
+      menuItem("2024 team tiers", tabName = "tiers", icon = icon("layer-group")),
       menuItem("Past seasons", tabName = "past", icon = icon("calendar"))
     )
   ),
@@ -71,7 +71,7 @@ ui <- dashboardPage(
 
 ### 2023 Baseball Reference
 
-bref <- read_html("https://www.baseball-reference.com/leagues/majors/2023-playoff-odds.shtml")
+bref <- read_html("https://www.baseball-reference.com/leagues/majors/2024-playoff-odds.shtml")
 
 bref_data <- (bref %>%
                 html_elements("table"))[[2]] %>%
