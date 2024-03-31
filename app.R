@@ -67,9 +67,9 @@ ui <- dashboardPage(
 
 ########################################################################################
 
-##### 2023
+##### 2024
 
-### 2023 Baseball Reference
+### 2024 Baseball Reference
 
 bref <- read_html("https://www.baseball-reference.com/leagues/majors/2024-playoff-odds.shtml")
 
@@ -98,7 +98,7 @@ bref_data <- (bref %>%
 
 
 
-### 2023 Baseball Prospectus
+### 2024 Baseball Prospectus
 
 bp <- read_html("https://www.baseballprospectus.com/standings/")
 
@@ -116,7 +116,7 @@ bp_data <- bp %>%
 
 
 
-### 2023 merge data frames
+### 2024 merge data frames
 
 data <- bind_cols(bref_data, bp_data %>% select(-team)) %>%
           select(team, contains("current"), contains("bref"), contains("bp")) %>%
@@ -125,11 +125,11 @@ data <- bind_cols(bref_data, bp_data %>% select(-team)) %>%
 
 
 
-### 2023 team batting
+### 2024 team batting
 
-bp_batting <- read_html("https://www.baseball-reference.com/leagues/majors/2023-standard-batting.shtml")
+bref_batting <- read_html("https://www.baseball-reference.com/leagues/majors/2023-standard-batting.shtml")
 
-bp_batting_data <- bp_batting %>%
+bref_batting_data <- bref_batting %>%
                       html_element("table") %>%
                       html_table() %>%
                       select(team = Tm, ops = 'OPS+') %>%
@@ -137,15 +137,15 @@ bp_batting_data <- bp_batting %>%
                       mutate(team = as.factor(team),
                              ops = as.numeric(ops))
 
-data <- data %>% left_join(bp_batting_data, by = "team")
+data <- data %>% left_join(bref_batting_data, by = "team")
 
 
 
-### 2023 team pitching
+### 2024 team pitching
 
-bp_pitching <- read_html("https://www.baseball-reference.com/leagues/majors/2023-standard-pitching.shtml")
+bref_pitching <- read_html("https://www.baseball-reference.com/leagues/majors/2024-standard-pitching.shtml")
 
-bp_pitching_data <- bp_pitching %>%
+bref_pitching_data <- bref_pitching %>%
                       html_element("table") %>%
                       html_table() %>%
                       select(team = Tm, era = 'ERA+') %>%
@@ -153,11 +153,11 @@ bp_pitching_data <- bp_pitching %>%
                       mutate(team = as.factor(team),
                              era = as.numeric(era))
 
-data <- data %>% left_join(bp_pitching_data, by = "team")
+data <- data %>% left_join(bref_pitching_data, by = "team")
 
 
 
-### 2023 clean data
+### 2024 clean data
 
 data <- data %>%
           arrange(desc(avg_w)) %>%
@@ -177,7 +177,7 @@ data <- data %>%
 
 
 
-### 2023 data table for dashboard
+### 2024 data table for dashboard
 
 dashboard_data <- data %>%
                     select(-contains("bref"), -contains("bp")) %>%
@@ -193,7 +193,7 @@ dashboard_data <- data %>%
 
 
 
-### 2023 data for team tiers graph
+### 2024 data for team tiers graph
 
 plot_data <- dashboard_data %>%
               mutate(Team = str_remove(str_remove(Team, " "),
