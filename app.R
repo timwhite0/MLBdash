@@ -127,7 +127,7 @@ data <- bind_cols(bref_data, bp_data %>% select(-team)) %>%
 
 ### 2024 team batting
 
-bref_batting <- read_html("https://www.baseball-reference.com/leagues/majors/2023-standard-batting.shtml")
+bref_batting <- read_html("https://www.baseball-reference.com/leagues/majors/2024-standard-batting.shtml")
 
 bref_batting_data <- bref_batting %>%
                       html_element("table") %>%
