@@ -17,7 +17,7 @@ ui <- dashboardPage(
 
   skin = "black",
   
-  title = "2024 MLB Dashboard",
+  title = "2025 MLB Dashboard",
   
   dashboardHeader(
     title = span(tagList(icon("baseball"), "MLBdash")),
@@ -28,8 +28,8 @@ ui <- dashboardPage(
     width = 250,
     
     sidebarMenu(
-      menuItem("2024 standings", tabName = "standings", icon = icon("list")),
-      menuItem("2024 team tiers", tabName = "tiers", icon = icon("layer-group")),
+      menuItem("2025 standings", tabName = "standings", icon = icon("list")),
+      menuItem("2025 team tiers", tabName = "tiers", icon = icon("layer-group")),
       menuItem("Past seasons", tabName = "past", icon = icon("calendar"))
     )
   ),
@@ -52,8 +52,8 @@ ui <- dashboardPage(
               
               selectInput("year",
                           label = NULL,
-                          choices = as.character(seq(from = 2023, to = 1998, by = -1)),
-                          selected = "2023",
+                          choices = as.character(seq(from = 2024, to = 1998, by = -1)),
+                          selected = "2024",
                           width = "100%"),
               
               plotOutput("pastgraph", height = "650px"),
@@ -67,11 +67,11 @@ ui <- dashboardPage(
 
 ########################################################################################
 
-##### 2024
+##### 2025
 
-### 2024 Baseball Reference
+### 2025 Baseball Reference
 
-bref <- read_html("https://www.baseball-reference.com/leagues/majors/2024-playoff-odds.shtml")
+bref <- read_html("https://www.baseball-reference.com/leagues/majors/2025-playoff-odds.shtml")
 
 bref_data <- (bref %>%
                 html_elements("table"))[[2]] %>%
@@ -98,7 +98,7 @@ bref_data <- (bref %>%
 
 
 
-### 2024 Baseball Prospectus
+### 2025 Baseball Prospectus
 
 bp <- read_html("https://www.baseballprospectus.com/standings/")
 
@@ -109,6 +109,7 @@ bp_data <- bp %>%
             bind_rows() %>%
             filter(!str_detect(str_to_lower(team), "east|central|west")) %>%
             select(team, bp_proj_w = SimW, bp_proj_l = SimL) %>%
+            mutate(team = ifelse(str_detect(team, "Sacramento"), "AthleticsATH", team)) %>%
             mutate(team = as.factor(team),
                    bp_proj_w = as.numeric(bp_proj_w),
                    bp_proj_l = as.numeric(bp_proj_l)) %>%
@@ -116,7 +117,7 @@ bp_data <- bp %>%
 
 
 
-### 2024 merge data frames
+### 2025 merge data frames
 
 data <- bind_cols(bref_data, bp_data %>% select(-team)) %>%
           select(team, contains("current"), contains("bref"), contains("bp")) %>%
@@ -125,9 +126,9 @@ data <- bind_cols(bref_data, bp_data %>% select(-team)) %>%
 
 
 
-### 2024 team batting
+### 2025 team batting
 
-bref_batting <- read_html("https://www.baseball-reference.com/leagues/majors/2024-standard-batting.shtml")
+bref_batting <- read_html("https://www.baseball-reference.com/leagues/majors/2025-standard-batting.shtml")
 
 bref_batting_data <- bref_batting %>%
                       html_element("table") %>%
@@ -141,9 +142,9 @@ data <- data %>% left_join(bref_batting_data, by = "team")
 
 
 
-### 2024 team pitching
+### 2025 team pitching
 
-bref_pitching <- read_html("https://www.baseball-reference.com/leagues/majors/2024-standard-pitching.shtml")
+bref_pitching <- read_html("https://www.baseball-reference.com/leagues/majors/2025-standard-pitching.shtml")
 
 bref_pitching_data <- bref_pitching %>%
                       html_element("table") %>%
@@ -157,7 +158,7 @@ data <- data %>% left_join(bref_pitching_data, by = "team")
 
 
 
-### 2024 clean data
+### 2025 clean data
 
 data <- data %>%
           arrange(desc(avg_w)) %>%
@@ -177,7 +178,7 @@ data <- data %>%
 
 
 
-### 2024 data table for dashboard
+### 2025 data table for dashboard
 
 dashboard_data <- data %>%
                     select(-contains("bref"), -contains("bp")) %>%
@@ -193,7 +194,7 @@ dashboard_data <- data %>%
 
 
 
-### 2024 data for team tiers graph
+### 2025 data for team tiers graph
 
 plot_data <- dashboard_data %>%
               mutate(Team = str_remove(str_remove(Team, " "),
